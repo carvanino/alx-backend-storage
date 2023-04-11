@@ -33,6 +33,6 @@ if __name__ == '__main__':
     \tmethod POST: {}\n\
     \tmethod PUT: {}\n\
     \tmethod PATCH: {}\n\
-    \tmethod DELETE: {}\n{} status check\
-    '.format(log, get, post, put, patch, delete, status_check)
+    \tmethod DELETE: {}\n{} status check'
+          .format(log, get, post, put, patch, delete, status_check)
           )
