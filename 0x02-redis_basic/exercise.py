@@ -15,12 +15,13 @@ def count_calls(method: Callable) -> Callable:
 
     """
     @wraps(method)
-    def count_wrapper(self, data):
-        # func = method(*args, **kwargs)
+    def count_wrapper(*args, **kwargs):
+        func = method(*args, **kwargs)
         key = method.__qualname__
-        self._redis.incr(key)
-        return self._redis.get(key)
-        # return func
+        # self._redis.incr(key)
+        args[0]._redis.incr(key)
+        # return self._redis.get(key)
+        return func
     return count_wrapper
 
 
@@ -48,7 +49,7 @@ class Cache:
         return key
 
     def get(self, key: str, fn: Optional[Callable]
-            = None) -> Union[str, bytes, int]:
+            = None) -> Union[str, bytes, int, None]:
         """
         Converts a data to the desired format(str, int or byte)
         """
@@ -58,7 +59,7 @@ class Cache:
             return fn(self._redis.get(key))
         return self._redis.get(key)
 
-    def get_str(self, key: str) -> str:
+    def get_str(self, key: str) ->  Union[str, bytes, int, None]:
         """
         Parametrize to str
         """
@@ -66,7 +67,7 @@ class Cache:
         value = self.get(key, lambda d: d.decode('utf-8'))
         return value
 
-    def get_int(self, key: str) -> int:
+    def get_int(self, key: str) ->  Union[str, bytes, int, None]:
         """
         Parametrize to int
         """
