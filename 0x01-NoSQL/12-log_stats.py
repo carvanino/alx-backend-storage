@@ -5,29 +5,18 @@ Stats from Nginx logs stored in MongoDB
 from pymongo import MongoClient
 
 if __name__ == '__main__':
-    client = MongoClient('mongodb://localhost:27017')
-    db = client["logs"]
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    nginx = client.logs.nginx
 
-    log = db.nginx.count_documents({})
-    get = db.nginx.count_documents({"method": "GET"})
-    post = db.nginx.count_documents({"method": "POST"})
-    put = db.nginx.count_documents({"method": "PUT"})
-    patch = db.nginx.count_documents({"method": "PATCH"})
-    delete = db.nginx.count_documents({"method": "DELETE"})
-    status_check = db.nginx.count_documents(
+    log = nginx.count_documents({})
+    get = nginx.count_documents({"method": "GET"})
+    post = nginx.count_documents({"method": "POST"})
+    put = nginx.count_documents({"method": "PUT"})
+    patch = nginx.count_documents({"method": "PATCH"})
+    delete = nginx.count_documents({"method": "DELETE"})
+    status_check = nginx.count_documents(
         {"$and": [{"method": "GET"}, {"path": "/status"}]})
 
-    '''
-    log = db.nginx.find({}).count()
-    get = db.nginx.find({method: "GET"}).count()
-    post = db.nginx.find({method: "POST"}).count()
-    put = db.nginx.find({method: "PUT"}).count()
-    patch = db.nginx.find({method: "PATCH"}).count()
-    delete = db.nginx.find({method: "DELETE"}).count()
-
-    status_check = db.nginx.find(
-            {"$and": [{"method": "GET"}, {"path": "/status"}]}).count()
-    '''
     print('{} logs\nMethods:\n\
     \tmethod GET: {}\n\
     \tmethod POST: {}\n\
