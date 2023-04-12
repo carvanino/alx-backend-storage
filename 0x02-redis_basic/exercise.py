@@ -25,6 +25,19 @@ def count_calls(method: Callable) -> Callable:
     return count_wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """
+    """
+    @wraps(method)
+    def history_wrapper(*args, **kwargs):
+        key = method.__qualname__
+        func = method(*args, **kwargs)
+        inputs = args[0]._redis.rpush("{}:inputs".format(key), str(args[1:]))
+        outputs = args[0]._redis.rpush("{}:outputs".format(key), str(func))
+        return func
+    return history_wrapper
+
+
 class Cache:
     """
     A Cache class
@@ -40,6 +53,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Generates a random key using uuid
@@ -59,7 +73,7 @@ class Cache:
             return fn(self._redis.get(key))
         return self._redis.get(key)
 
-    def get_str(self, key: str) ->  Union[str, bytes, int, None]:
+    def get_str(self, key: str) -> Union[str, bytes, int, None]:
         """
         Parametrize to str
         """
@@ -67,7 +81,7 @@ class Cache:
         value = self.get(key, lambda d: d.decode('utf-8'))
         return value
 
-    def get_int(self, key: str) ->  Union[str, bytes, int, None]:
+    def get_int(self, key: str) -> Union[str, bytes, int, None]:
         """
         Parametrize to int
         """
