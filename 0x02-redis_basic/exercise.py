@@ -54,11 +54,12 @@ def replay(method):
     # print(lists_o)
     # print(lists_i)
     print('{} was called {} times:'.format(key, count.decode('utf-8')))
-    for i in range(int(count)):
-        print("{}(*{}) -> {}".format(key,
-                                     lists_i[i].decode('utf-8'),
-                                     lists_o[i].decode('utf-8'))
-              )
+    for i, o in zip(lists_i, lists_o):
+        # print(i)
+        # print(o)
+        i = i.decode('utf-8')
+        o = o.decode('utf-8')
+        print("{}(*{}) -> {}".format(key, i, o))
 
 
 class Cache:
