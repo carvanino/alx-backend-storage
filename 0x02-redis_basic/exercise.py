@@ -5,7 +5,23 @@ Reading from Redis by type
 
 import redis
 from uuid import uuid4
+from functools import wraps
 from typing import Union, Callable, Optional
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    increments a counter for each time a method on Cache is called
+
+    """
+    @wraps(method)
+    def count_wrapper(self, data):
+        # func = method(*args, **kwargs)
+        key = method.__qualname__
+        self._redis.incr(key)
+        return self._redis.get(key)
+        # return func
+    return count_wrapper
 
 
 class Cache:
@@ -22,6 +38,7 @@ class Cache:
         self._redis = redis.Redis(host=host, port=port, password=password)
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Generates a random key using uuid
